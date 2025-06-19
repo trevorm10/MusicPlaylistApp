@@ -1,5 +1,5 @@
 package com.example.musicplaylistapp
-
+//ST10468338 Poogendran Trevor Moodley
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -46,23 +46,75 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MusicAppTheme(content: @Composable () -> Unit) {
+fun MusicAppTheme(
+    content: @Composable () -> Unit
+) {
     MaterialTheme(
-        colorScheme = ColorScheme(
+        colorScheme = lightColorScheme(
             primary = Color(0xFF6200EE),
-            secondary = Color(0xFF03DAC5),
-            tertiary = Color(0xFF3700B3),
-            background = Color.White,
-            surface = Color.White,
-            error = Color(0xFFB00020),
             onPrimary = Color.White,
+            secondary = Color(0xFF03DAC5),
             onSecondary = Color.Black,
+            tertiary = Color(0xFF3700B3),
             onTertiary = Color.White,
+            background = Color(0xFFF5F5F5),
             onBackground = Color.Black,
+            surface = Color.White,
             onSurface = Color.Black,
-            onError = Color.White
         ),
         content = content
+    )
+}
+
+private fun lightColorScheme(
+    primary: Color,
+    onPrimary: Color,
+    secondary: Color,
+    onSecondary: Color,
+    tertiary: Color,
+    onTertiary: Color,
+    background: Color,
+    onBackground: Color,
+    surface: Color,
+    onSurface: Color
+): ColorScheme {
+    return ColorScheme(
+        primary = primary,
+        onPrimary = onPrimary,
+        primaryContainer = primary.copy(alpha = 0.2f),
+        onPrimaryContainer = onPrimary,
+        inversePrimary = primary,
+        secondary = secondary,
+        onSecondary = onSecondary,
+        secondaryContainer = secondary.copy(alpha = 0.2f),
+        onSecondaryContainer = onSecondary,
+        tertiary = tertiary,
+        onTertiary = onTertiary,
+        tertiaryContainer = tertiary.copy(alpha = 0.2f),
+        onTertiaryContainer = onTertiary,
+        background = background,
+        onBackground = onBackground,
+        surface = surface,
+        onSurface = onSurface,
+        surfaceVariant = surface,
+        onSurfaceVariant = onSurface,
+        surfaceTint = primary,
+        inverseSurface = background,
+        inverseOnSurface = onBackground,
+        error = Color(0xFFB00020),
+        onError = Color.White,
+        errorContainer = Color(0xFFB00020).copy(alpha = 0.2f),
+        onErrorContainer = Color(0xFFB00020),
+        outline = Color.Gray,
+        outlineVariant = Color.LightGray,
+        scrim = Color.Black.copy(alpha = 0.5f),
+        surfaceBright = surface,
+        surfaceDim = surface.copy(alpha = 0.8f),
+        surfaceContainer = surface,
+        surfaceContainerHigh = surface,
+        surfaceContainerHighest = surface,
+        surfaceContainerLow = surface,
+        surfaceContainerLowest = surface
     )
 }
 
