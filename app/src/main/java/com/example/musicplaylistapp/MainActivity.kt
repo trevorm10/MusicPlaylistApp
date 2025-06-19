@@ -60,10 +60,10 @@ class MainActivity : ComponentActivity() {
 fun MusicApp() {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Main) }
     val songs = remember { mutableStateListOf(
-        Song(1, "Dear Mama", "2Pac", 4.5f, listOf("Great song!")),
-        Song(2, "Happy", " Pharrell Williams", 3.8f, listOf("Nice melody")),
+        Song(1, "Dear Mama", "2Pac", 4.6f, listOf("Great song!")),
+        Song(2, "Happy", " Pharrell Williams", 3.7f, listOf("Nice melody")),
         Song(3, "Azizam", " Ed Sheeran", 5f, listOf("Awesome Song")),
-        Song(4, "Azizam", " Ed Sheeran", 3f, listOf("Ok Song")),
+        Song(4, "Bliss", " Tyla", 5f, listOf("Great to Dance "))
     )}
 
     when (currentScreen) {
