@@ -124,7 +124,7 @@ fun MusicApp() {
     val songs = remember { mutableStateListOf(
         Song(1, "Bohemian Rhapsody", "Queen", 4.8f, listOf("Masterpiece!", "Best song ever")),
         Song(2, "Imagine", "John Lennon", 4.6f, listOf("Timeless classic")),
-        Song(3, "Hotel California", "Eagles", 4.7f, listOf("Iconic guitar solo"))
+        Song(3, "Hotel California", "Eagles", 4.7f, listOf("Iconic guitar solo")),
     )}
 
     when (currentScreen) {
@@ -182,7 +182,7 @@ fun MainScreen(
             }
         }
 
-        // Song list
+        //My song list
         if (songs.isEmpty()) {
             Box(
                 modifier = Modifier
