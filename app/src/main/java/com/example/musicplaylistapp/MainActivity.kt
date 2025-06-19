@@ -1,5 +1,6 @@
 package com.example.musicplaylistapp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,8 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
@@ -31,7 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 data class Song(
     val id: Int,
@@ -60,10 +66,9 @@ class MainActivity : ComponentActivity() {
 fun MusicApp() {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Main) }
     val songs = remember { mutableStateListOf(
-        Song(1, "Dear Mama", "2Pac", 4.6f, listOf("Great song!")),
-        Song(2, "Happy", " Pharrell Williams", 3.7f, listOf("Nice melody")),
-        Song(3, "Azizam", " Ed Sheeran", 5f, listOf("Awesome Song")),
-        Song(4, "Bliss", " Tyla", 5f, listOf("Great to Dance "))
+        Song(1, "Bohemian Rhapsody", "Queen", 4.8f, listOf("Masterpiece!", "Best song ever")),
+        Song(2, "Imagine", "John Lennon", 4.6f, listOf("Timeless classic")),
+        Song(3, "Hotel California", "Eagles", 4.7f, listOf("Iconic guitar solo"))
     )}
 
     when (currentScreen) {
@@ -80,8 +85,20 @@ fun MusicApp() {
             },
             onCancel = { currentScreen = Screen.Main }
         )
-        Screen.SecondScreen -> SecondScreen(onBack = { currentScreen = Screen.Main })
+        Screen.SecondScreen -> SecondScreen(
+            onBack = { currentScreen = Screen.Main },
+            songs = songs
+        )
     }
+}
+
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
+private fun Modifier.padding(
+    dp: Dp,
+    function: @Composable () -> Unit
+): Modifier {
+
+
 }
 
 @Composable
@@ -97,34 +114,37 @@ fun MainScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
-    ) {
-        // Action buttons at top
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(onClick = onAddClick) {
-                Text("Add to Playlist")
-            }
+            {
+                // Action buttons at top
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(onClick = onAddClick) {
+                        Text("Add to Playlist")
+                    }
 
-            Button(onClick = onSecondScreenClick) {
-                Text("Second Screen")
-            }
+                    Button(onClick = onSecondScreenClick) {
+                        Text("Second Screen")
+                    }
 
-            Button(onClick = { (context as ComponentActivity).finish() }) {
-                Text("Exit")
-            }
-        }
+                    Button(onClick = { (context as ComponentActivity).finish() }) {
+                        Text("Exit")
+                    }
+                }
 
-        // Song list
-        LazyColumn {
-            items(songs) { song ->
-                SongItem(song = song, onClick = { onSongClick(song) })
-            }
-        }
-    }
+                // Song list
+                LazyColumn {
+                    items(songs) { song ->
+                        SongItem(song = song, onClick = { onSongClick(song) })
+                    }
+                }
+            },
+        verticalArrangement = TODO(),
+        horizontalAlignment = TODO(),
+        content = TODO()
 }
 
 @Composable
@@ -230,18 +250,113 @@ fun AddSongScreen(
 }
 
 @Composable
-fun SecondScreen(onBack: () -> Unit) {
+fun SecondScreen(
+    onBack: () -> Unit,
+    songs: List<Song>
+) {
+    var showSongs by remember { mutableStateOf(false) }
+    var averageRating by remember { mutableStateOf(0f) }
+    var showAverage by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Second Screen", style = MaterialTheme.typography.headlineLarge)
+        Text("Playlist Analytics", style = MaterialTheme.typography.headlineLarge)
+
         Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onBack) {
-            Text("Back to Main")
+
+        // Button to show song list
+        Button(
+            onClick = { showSongs = !showSongs },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(if (showSongs) "Hide Song Details" else "Show Song Details")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Button to calculate average rating
+        Button(
+            onClick = {
+                // Calculate average using loop
+                var total = 0f
+                for (song in songs) {
+                    total += song.rating
+                }
+                averageRating = if (songs.isNotEmpty()) total / songs.size else 0f
+                showAverage = true
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Calculate Average Rating")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display average rating when calculated
+        if (showAverage) {
+            Text(
+                text = "Average Rating: ${"%.1f".format(averageRating)}",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Display song list when visible
+        if (showSongs) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                songs.forEach { song ->
+                    SongDetailItem(song = song)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Back button at bottom
+        Button(
+            onClick = onBack,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Back to Main Screen")
+        }
+    }
+}
+
+@Composable
+fun SongDetailItem(song: Song) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = song.title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = "Artist: ${song.artist}", fontSize = 16.sp)
+            Text(text = "Rating: ${song.rating}", fontSize = 16.sp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "Comments:", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            song.comments.forEach { comment ->
+                Text(text = "• $comment", fontSize = 14.sp, modifier = Modifier.padding(start = 8.dp))
+            }
         }
     }
 }
